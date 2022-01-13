@@ -1,0 +1,25 @@
+apiVersion: camel.apache.org/v1alpha1
+kind: KameletBinding
+metadata:
+  name: sqs-to-log
+  annotations:
+    trait.camel.apache.org/keda.enabled: "true"
+    trait.camel.apache.org/keda.polling-interval: "1"
+    trait.camel.apache.org/keda.cooldown-period: "1"
+spec:
+  source:
+    ref:
+      apiVersion: camel.apache.org/v1alpha1
+      kind: Kamelet
+      name: aws-sqs-source
+    properties:
+      queueNameOrArn: "<-- queue name -->"
+      queueURL: "<-- e.g. https://sqs.eu-central-1.amazonaws.com/xxx/yyy -->"
+      region: "<-- e.g. eu-central-1 -->"
+      accessKey: "<-- access key -->"
+      secretKey: "<-- secret key -->"
+  sink:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1alpha1
+      name: log-sink

@@ -1,0 +1,32 @@
+apiVersion: camel.apache.org/v1alpha1
+kind: KameletBinding
+metadata:
+  name: kafka-to-log
+  annotations:
+    trait.camel.apache.org/keda.enabled: "true"
+    trait.camel.apache.org/keda.polling-interval: "1"
+    trait.camel.apache.org/keda.cooldown-period: "1"
+spec:
+  source:
+    ref:
+      apiVersion: camel.apache.org/v1alpha1
+      kind: Kamelet
+      name: kafka-source
+    properties:
+      bootstrapServers: "<-- bootstrap servers -->"
+      consumerGroup: my-group
+      topic: "<-- the topic -->"
+      user: "<-- user -->"
+      password: "<-- pwd -->"
+  steps:
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1alpha1
+      name: delay-action
+    properties:
+      milliseconds: 3000
+  sink:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1alpha1
+      name: log-sink
