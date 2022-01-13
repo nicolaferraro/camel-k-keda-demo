@@ -1,7 +1,7 @@
 # Camel K KEDA Demo
 
 This demo shows how to use Camel K together with KEDA to enable autoscaling (and scaling to 0) of integrations
-starting from specific source. The demo will focus on autoscaling from AWS SQS and Red Hat Streams for Apache Kafka.
+starting from specific sources. The demo will focus on autoscaling from AWS SQS and Red Hat Streams for Apache Kafka.
 
 ## Prerequisites
 
@@ -74,7 +74,7 @@ Quickly the terminal watching the pods will show a pod being created to process 
 ## 2. Autoscaling from Red Hat managed Kafka
 
 You can go to https://cloud.redhat.com to create a free Kafka instance for this demo.
-After you created an instance, create a topic named e.g. `messages` **with 3 partitions (!)**, a service account and grant permissions to the service account to do `all` operation on the topic and any consumer group associated to it.
+After you created an instance, create a topic named e.g. `messages` **with 3 partitions (!)**, a service account and grant permissions to the service account to do `all` operations on the topic and any consumer group associated to it.
 
 After doing so you need to:
 - Edit the `kafka-to-log.yaml` file to put references and credentials for the instance
@@ -88,7 +88,7 @@ You can create the binding from Kafka to a log printer using the following comma
 kubectl apply -f kafka-to-log.yaml
 ```
 
-The binding contains an **artificial delay** to make sure the processing is longer, in order to see the scaling out effect.
+The binding contains an **artificial delay** to make sure the processing is longer, in order to see the **scaling out effect**.
 
 Wait for the binding to be created. You can check the state by running the command:
 
@@ -133,5 +133,4 @@ Now if you send much more data:
 
 This time the KEDA autoscaler will detect that a single pod can't handle the load and will instantiate **3 pods** to handle it. No more than 3 pods will be created by keda since it **corresponds to the number of partitions** in the Kafka topic.
 
-After some time, the consumers will rebalance and all 3 pods will start consuming messages (you'll notice it in the `stern` terminal).
-
+After some time, the consumers will rebalance the partitions among them and all 3 pods will start consuming messages (you'll notice 3 messages from different pods printed every 3 seconds in the `stern` terminal).
